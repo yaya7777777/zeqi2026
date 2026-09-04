@@ -1,0 +1,49 @@
+# ========== Maven 编译产物（target 目录，每次 mvn package 生成，纯垃圾文件）==========
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+*.jar
+*.war
+*.ear
+
+# ========== H2 数据库文件（自己本地的测试数据，每个人不一样，不应该 push）==========
+data/
+*.mv.db
+*.trace.db
+*.lock.db
+
+# ========== IDEA IntelliJ / Eclipse / VSCode 工程文件（每个人 IDE 自己生成）==========
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.project
+.vscode/
+.factorypath
+.springBeans
+
+# ========== 操作系统垃圾文件 ==========
+Thumbs.db                    # Windows 图片缩略图缓存
+ehthumbs.db
+Desktop.ini
+.DS_Store                   # macOS Finder 目录元数据
+.Spotlight-V100/
+.Trashes/
+
+# ========== 日志文件（Spring Boot 默认 logback 输出 *.log，也不配版控）==========
+*.log
+logs/
+
+# ========== JVM 崩溃/性能分析临时文件 ==========
+*.hprof
+*.swp
+*.pid
