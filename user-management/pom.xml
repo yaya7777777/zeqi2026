@@ -1,0 +1,135 @@
+<!--
+  ====================================================================================================================
+  📦 Maven 项目对象模型（Project Object Model）
+  ====================================================================================================================
+  ⭐ 学习提示：pom.xml = Maven 的核心配置，相当于 Python 的 requirements.txt + setup.py + 构建脚本 三合一。
+             你在 IDEA 里只要右键 Maven → Reload Project，IDEA 就会自动从 Maven 中央仓库下载所有依赖 jar 包。
+  ====================================================================================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ============ 1. 继承 Spring Boot 父工程（相当于"把 Spring Boot 全家桶的依赖版本一次性订好"） ========= -->
+    <!--
+         spring-boot-starter-parent 是 Spring 官方提供的"父 POM"，
+         里面已经把 Spring MVC / Jackson / Logback / Tomcat 等常用依赖的版本
+         做了最严格的兼容性测试，我们继承它就不用一个个写版本号了，避免"依赖冲突地狱"。
+         选 2.7.x 版本（JDK 8 兼容最好，招新/面试标配；也可以用 3.x，需要 JDK 17+）
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
+        <relativePath/>
+    </parent>
+
+    <!-- ============ 2. 本项目的 GAV 坐标（Maven 靠这 3 个字段在全世界唯一标识你的项目） ========= -->
+    <groupId>com.zeqi</groupId>          <!-- 组织/公司域名倒写：zeqi.com → com.zeqi -->
+    <artifactId>user-management</artifactId>  <!-- 项目名（Artifact）-->
+    <version>1.0.0-SNAPSHOT</version>         <!-- 版本号：SNAPSHOT=开发中，RELEASE=正式发布 -->
+    <name>user-management</name>
+    <description>2026 择栖后端招新题 Part2 · 用户管理系统（Java Spring Boot 版）</description>
+
+    <!-- ============ 3. JDK 版本统一设置为 8（招新考试一般要求 JDK 8 兼容） ========= -->
+    <properties>
+        <java.version>8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>   <!-- 源代码文件编码：UTF-8 防中文乱码 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+    </properties>
+
+    <!-- ============ 4. 依赖声明（要什么功能加什么 starter，Spring Boot 提供"开箱即用"） ========= -->
+    <dependencies>
+
+        <!-- 🔧 依赖 1：Spring Web 核心（= Spring MVC + 内嵌 Tomcat + Jackson JSON 序列化）
+             Spring Boot 的 starter = 一套"依赖包组合"，你不用再手配 7~8 个零散 jar
+             以前写原生 Spring MVC，你得手动引：spring-webmvc / tomcat-embed-core / jackson-databind ...
+             现在一个 spring-boot-starter-web 全部搞定 ✨
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 🔧 依赖 2：Spring JDBC（JdbcTemplate 手写 SQL，新手最容易理解的"数据库访问方式"）
+             为什么不用 MyBatis / JPA？
+               - 招新考试考察你"SQL 本身写得对不对"，JdbcTemplate 就是纯 SQL，评委一眼能看懂
+               - MyBatis 需要 XML/注解额外写 Mapper，JPA 学 JPQL 有门槛
+               - 有了 JdbcTemplate，和前面 Python 版 sqlite3.execute 的 SQL 完全一样，迁移零成本
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- 🔧 依赖 3：H2 嵌入式数据库（💡 本题最佳选择！）
+             H2 是 Java 写的、单 jar 内嵌、零安装、零配置的关系型数据库，
+             语法 99% 兼容 MySQL（CREATE TABLE / INSERT / SELECT 都一样）。
+             两种运行模式：
+               · 内存模式 mem:testdb → 程序关了数据就没了（演示用，不用清库）
+               · 文件模式 file:./data/users → 持久化到磁盘文件，和 SQLite 一模一样
+             为什么不用 SQLite JDBC？
+               - SQLite 是 C 写的，在某些 Windows 机器上要额外装 native DLL，偶尔 ClassNotFound
+               - H2 纯 Java，一次 JDK 装好，任何平台 mvn spring-boot:run 秒启动 ✅
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>        <!-- scope=runtime：只在运行时需要，编译代码用不到它的类 -->
+        </dependency>
+
+        <!-- 🔧 依赖 4：Lombok（代码简化神器，可选但强烈推荐）
+             自动帮你生成 Getter / Setter / ToString / AllArgsConstructor 这些"样板代码"
+             以前写一个 User 实体类，手工写 20 行 getter/setter，现在 1 个 @Data 注解搞定
+             💡 IDEA 要装 Lombok 插件（Settings → Plugins → 搜 Lombok 安装）+ 打开 Annotation Processing
+             如果你机器不想装，我在代码里也会留"无 Lombok 手写版本注释"，二选一即可。
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 🔧 依赖 5：Validation（参数校验注解 @NotBlank / @Size，Controller 入参自动拦截 → 400）
+             手写一堆 if(username==null) return 400 很麻烦，加 @NotBlank 一个注解全搞定
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ========== 测试依赖（Spring Boot 自带 JUnit 5） ========== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- ============ 5. 构建插件（打成可执行 jar 包用） ========= -->
+    <build>
+        <plugins>
+            <!-- spring-boot-maven-plugin 提供两个神仙命令：
+                   · mvn spring-boot:run  → 一行命令直接启动项目（不用先打包再 java -jar）
+                   · mvn package          → 打成 target/user-management-1.0.0-SNAPSHOT.jar
+                                             这个 jar 内嵌 Tomcat，丢到任何有 JDK8+ 的服务器
+                                             执行 java -jar xxx.jar 直接跑，不用装 Tomcat ✨
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
