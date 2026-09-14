@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
                     .stream().map(FieldError::getDefaultMessage).collect(Collectors.joining("；"));
         } else {
             msg = ((BindException) e).getBindingResult().getFieldErrors()
-                    .stream().map(FieldError::getDefaultMessage).collect(Collectors.joining("；"));
+            .stream().map(FieldError::getDefaultMessage).collect(Collectors.joining("；"));
         }
         log.warn("[参数校验失败] {}", msg);
         return Result.fail(400, msg);
