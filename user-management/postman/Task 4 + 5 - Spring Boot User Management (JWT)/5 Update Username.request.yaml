@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/users/me/username"
+method: PATCH
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{token}}
+body:
+  type: text
+  content: |-
+    {
+      "username": "alice_new"
+    }
+order: 5000

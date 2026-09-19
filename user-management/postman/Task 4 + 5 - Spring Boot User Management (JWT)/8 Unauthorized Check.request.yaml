@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/users/me"
+method: GET
+headers:
+  Authorization: Bearer invalid-token
+order: 8000

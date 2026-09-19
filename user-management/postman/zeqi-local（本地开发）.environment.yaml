@@ -1,0 +1,4 @@
+name: zeqi-local（本地开发）
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080'
